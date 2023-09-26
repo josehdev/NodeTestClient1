@@ -1,23 +1,25 @@
 const http = require('http');
 
-let port = '8080';
-let url = `http://localhost:${port}`;
+let serverName=process.env.SERVER1_NAME;
+if (!serverName)
+    serverName = "localhost";
 
-console.log(`Rev1.0 - Retrieving data from ${url}...`);
+let port = '8080';
+let url = `http://${serverName}:${port}`;
 
 function requestHandler(res) {
     if (res.statusCode !== 200) {
         console.error(`Did not get an OK from the server. Code: ${res.statusCode}`);
         res.resume();
         return;
-      }    
-
-      let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+    }    
     
-      res.on('close', () => {
+    let data = '';
+    res.on('data', (chunk) => {
+        data += chunk;
+    });
+    
+    res.on('close', () => {
         console.log(data);
     });      
 };
@@ -39,5 +41,7 @@ async function requestLoop() {
         await delay(5000);
     }
 }
+
+console.log(`Rev1.0 - Retrieving data from ${url}...`);
 
 requestLoop();
